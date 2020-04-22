@@ -1,2 +1,2 @@
 var a = 1;
-alert(5);
+alert(6);
