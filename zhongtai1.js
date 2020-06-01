@@ -1,2 +1,2 @@
-var a = a1;
+var a = 111;
 alert(8);
