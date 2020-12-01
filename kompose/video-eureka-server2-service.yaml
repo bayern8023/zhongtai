@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: video-eureka-server2
+  name: video-eureka-server2
+spec:
+  ports:
+  - name: "8762"
+    port: 8762
+    targetPort: 8762
+  selector:
+    io.kompose.service: video-eureka-server2
+status:
+  loadBalancer: {}

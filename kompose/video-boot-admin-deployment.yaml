@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: video-boot-admin
+  name: video-boot-admin
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: video-boot-admin
+    spec:
+      containers:
+      - image: swr.cn-north-4.myhuaweicloud.com/cmccvideo/boot:image-version
+        name: video-boot-admin
+        ports:
+        - containerPort: 8002
+        resources: {}
+      imagePullSecrets:
+      - name: regcred
+      restartPolicy: Always
+status: {}

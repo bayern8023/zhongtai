@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmcc.infrastructure.database.mapper.PeriodMeetingMapper">
+
+	<resultMap type="com.cmcc.domain.model.PeriodMeeting" id="departmentResultMap">
+		<result column="uuid" property="uuid"/>
+		<result column="meeting_theme" property="meetingTheme"/>
+		<result column="template_uuid" property="templateUuid"/>
+		<result column="period_starttime" property="periodStarttime"/>
+		<result column="period_endtime" property="periodEndtime"/>
+		<result column="meeting_date" property="meetingDate"/>
+		<result column="meeting_time" property="meetingTime"/>
+		<result column="period_type" property="periodType"/>
+		<result column="host_ec_uid" property="hostEcUid"/>
+		<result column="operator_ec_uid" property="operatorEcUid"/>
+		<result column="meeting_ifmute" property="meetingIfmute"/>
+		<result column="meeting_length" property="meetingLength"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+	</resultMap>
+
+	<!--表名 -->
+	<sql id="tableName">
+		period_meeting
+	</sql>
+
+	<!-- 保存周期会议 -->
+	<insert id="savePeriodMeeting" parameterType="PeriodMeeting">
+		insert into <include refid="tableName"></include>
+		(
+			uuid,
+			meeting_theme,
+			template_uuid,
+			period_starttime,
+			period_endtime,
+			meeting_time,
+			period_type,
+			meeting_date,
+			host_ec_uid,
+			operator_ec_uid,
+			meeting_ifmute,
+			meeting_length,
+			create_time,
+			update_time
+		)values(
+			#{uuid},
+			#{meetingTheme},
+			#{templateUuid},
+			#{periodStarttime},
+			#{periodEndtime},
+			#{meetingTime},
+			#{periodType},
+			#{meetingDate},
+			#{hostEcUid},
+			#{operatorEcUid},
+			#{meetingIfmute},
+			#{meetingLength},
+			#{createTime},
+			#{updateTime}
+		)
+	</insert>
+
+	<!-- 查询周期列表 -->
+	<select id="getPeriodList" parameterType="PeriodQuery" resultMap="departmentResultMap">
+		select
+			uuid,
+			meeting_theme,
+			operator_ec_uid,
+			period_type,
+		    DATE_FORMAT(period_starttime,"%Y.%m.%d") period_starttime,
+		    DATE_FORMAT(period_endtime, "%Y.%m.%d") period_endtime
+		from <include refid="tableName"></include>
+		where uuid in
+		<foreach item="item" index="index" collection="periodList"
+				 open="(" separator="," close=")">
+			#{item.uuid}
+		</foreach>
+		order by create_time desc
+		limit #{page},#{pageSize}
+	</select>
+
+	<!-- 查询周期列表总数 -->
+	<select id="getPeriodListCount" parameterType="PeriodQuery" resultType="Integer">
+		select count(1)
+		from <include refid="tableName"></include>
+		where uuid in
+		<foreach item="item" index="index" collection="periodList"
+				 open="(" separator="," close=")">
+			#{item.uuid}
+		</foreach>
+	</select>
+
+	<!-- 查询周期信息 -->
+	<select id="getPeriodInfo" parameterType="PeriodQuery" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where 1=1
+		and operator_ec_uid = #{operatorEcUid}
+		and	meeting_theme = #{meetingTheme}
+	</select>
+
+	<!-- 验证重复周期信息 -->
+	<select id="checkPeriodInfo" parameterType="PeriodQuery" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where 1=1
+		and	uuid = #{uuid}
+		and operator_ec_uid = #{operatorEcUid}
+	</select>
+
+	<!-- 更新周期 -->
+	<update id="editPeriodMeeting" parameterType="Meeting">
+		update  <include refid="tableName"></include>
+		set meeting_theme = #{meetingTheme},
+			template_uuid = #{templateUuid},
+			period_starttime = #{periodStarttime},
+			period_endtime = #{periodEndtime},
+			meeting_time = #{meetingTime},
+			period_type = #{periodType},
+			meeting_date = #{meetingDate},
+			meeting_ifmute = #{meetingIfmute},
+			meeting_length = #{meetingLength},
+			update_time = #{updateTime}
+		where uuid = #{uuid}
+	</update>
+
+
+	<delete id="deletePeriod" parameterType="String">
+		delete from <include refid="tableName"></include> where uuid = #{uuid}
+	</delete>
+
+</mapper>

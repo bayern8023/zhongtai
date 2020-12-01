@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmcc.infrastructure.database.mapper.PeriodMeetingMapper">
+
+    <resultMap type="com.cmcc.domain.model.PeriodMeeting" id="departmentResultMap">
+        <result column="uuid" property="uuid"/>
+        <result column="meeting_theme" property="meetingTheme"/>
+        <result column="template_uuid" property="templateUuid"/>
+        <result column="period_starttime" property="periodStarttime"/>
+        <result column="period_endtime" property="periodEndtime"/>
+        <result column="meeting_date" property="meetingDate"/>
+        <result column="meeting_time" property="meetingTime"/>
+        <result column="period_type" property="periodType"/>
+        <result column="host_ec_uid" property="hostEcUid"/>
+        <result column="operator_ec_uid" property="operatorEcUid"/>
+        <result column="meeting_ifmute" property="meetingIfmute"/>
+        <result column="meeting_length" property="meetingLength"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="getPeriodMeetingByUuid" parameterType="String" resultMap="departmentResultMap">
+        select * from period_meeting where uuid = #{uuid}
+    </select>
+
+</mapper>

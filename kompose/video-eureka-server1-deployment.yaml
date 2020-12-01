@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: video-eureka-server1
+  name: video-eureka-server1
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: video-eureka-server1
+    spec:
+      containers:
+      - image: swr.cn-north-4.myhuaweicloud.com/cmccvideo/eureka1:image-version
+        name: video-eureka-server1
+        ports:
+        - containerPort: 8761
+        resources: {}
+      imagePullSecrets:
+      - name: regcred
+      restartPolicy: Always
+status: {}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmcc.infrastructure.database.mapper.TemplateMapper">
+
+	<resultMap id="template" type="com.cmcc.domain.model.Template">
+		<result property="uuid" column="uuid"/>
+		<result property="templateName" column="template_name"/>
+		<result property="createPeople" column="create_people"/>
+		<result property="meetingHost" column="meeting_host"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="meetingIfmute" column="meeting_ifmute"/>
+		<result property="imageType" column="image_type"/>
+		<result property="ifDelete" column="ifdelete"/>
+	</resultMap>
+
+	<insert id="saveTemplate" parameterType="com.cmcc.domain.model.Template">
+		insert into
+		meeting_template(uuid,template_name,create_people,meeting_host,create_time,update_time,meeting_ifmute,image_type,ifdelete)
+		values
+		(#{uuid},#{templateName},#{createPeople},#{meetingHost},#{createTime},#{updateTime},#{meetingIfmute},#{imageType},#{ifDelete}
+		)
+	</insert>
+
+	<select id="getTemplateByCreatPeople" resultMap="template">
+		select * from meeting_template
+		where create_people = #{create_people} and ifdelete = false
+		order by create_time desc
+		limit #{offset},#{size}
+	</select>
+
+	<select id="templateCount" resultType="java.lang.Integer">
+		select count(*) from meeting_template where create_people=#{create_people} and ifdelete = false
+	</select>
+
+	<select id="getTemplateByUuid" parameterType="String" resultMap="template">
+		select * from meeting_template where uuid = #{uuid} and ifdelete = false
+	</select>
+
+
+	<update id="updateTemplate"  parameterType="com.cmcc.domain.model.Template">
+	UPDATE meeting_template
+	<trim prefix="set" suffixOverrides=",">
+		<if test="templateName!=null">template_name=#{templateName},</if>
+		<if test="updateTime!=null">update_time=#{updateTime},</if>
+		<if test="meetingIfmute!=null">meeting_ifmute=#{meetingIfmute},</if>
+		<if test="imageType!=null">image_type=#{imageType},</if>
+	</trim>
+	WHERE uuid=#{uuid}
+	</update>
+
+	<update id="deleteTemplate" >
+		update
+		meeting_template
+		set ifdelete=true, update_time=#{update_time} where uuid = #{uuid} and create_people = #{create_people}
+	</update>
+
+
+    <select id="ifOnlyName" resultType="java.lang.Boolean">
+        select count(*) from meeting_template where create_people=#{create_people} and template_name=#{template_name} and ifdelete = false
+    </select>
+
+	<select id="nameCount" resultType="java.lang.Integer">
+       select count(*) from meeting_template where create_people=#{create_people} and template_name=#{template_name} and ifdelete = false
+	</select>
+
+	<select id="tpNameUuid" resultType="java.lang.String">
+        select uuid from meeting_template where create_people=#{create_people} and template_name=#{template_name}
+    </select>
+
+
+
+
+</mapper>

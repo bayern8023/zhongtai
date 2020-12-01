@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml convert
+    kompose.version: 1.7.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: video-zuul
+  name: video-zuul
+spec:
+  ports:
+  - name: "8001"
+    port: 8001
+    targetPort: 8001
+  selector:
+    io.kompose.service: video-zuul
+status:
+  loadBalancer: {}

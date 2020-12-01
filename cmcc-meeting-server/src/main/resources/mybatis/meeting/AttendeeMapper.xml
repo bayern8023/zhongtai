@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmcc.infrastructure.database.mapper.AttendeeMapper">
+
+    <resultMap type="com.cmcc.domain.model.Attendee" id="attendeeList">
+        <result column="mobile" property="mobile"/>
+        <result column="name" property="name"/>
+        <result column="business" property="business"/>
+    </resultMap>
+
+    <!--表名 -->
+    <sql id="tableName">
+		attendee
+	</sql>
+
+    <select id="getPeriodListForMobile" parameterType="String" resultMap="attendeeList">
+        select uuid from <include refid="tableName"></include>
+        where mobile = #{mobile}
+        and type = 'PERIOD'
+    </select>
+
+    <select id="getAttendeeForPeriod" parameterType="String" resultMap="attendeeList">
+        select
+            mobile,
+            name,
+            business
+        from <include refid="tableName"></include>
+        where uuid = #{uuid}
+    </select>
+
+    <delete id="deleteAttendees" parameterType="String">
+        delete from <include refid="tableName"></include>
+        where uuid = #{uuid}
+    </delete>
+
+    <insert id="addBatchAttendees" parameterType="List">
+        insert into <include refid="tableName"></include> (mobile, uuid, type, name, business) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.mobile}, #{item.uuid}, #{item.type}, #{item.name}, #{item.business})
+        </foreach>
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmcc.infrastructure.database.mapper.MeetingMapper">
+
+	<resultMap type="com.cmcc.domain.model.Meeting" id="departmentResultMap">
+		<result column="uuid" property="uuid"/>
+		<result column="pm_uuid" property="pmUuid"/>
+		<result column="meeting_id" property="meetingId"/>
+        <result column="template_uuid" property="templateUuid"/>
+		<result column="meeting_theme" property="meetingTheme"/>
+		<result column="meeting_date" property="meetingDate"/>
+		<result column="meeting_time" property="meetingTime"/>
+		<result column="meeting_type" property="meetingType"/>
+		<result column="meeting_status" property="meetingStatus"/>
+		<result column="meeting_ifmute" property="meetingIfmute"/>
+		<result column="meeting_length" property="meetingLength"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+
+	<!--表名 -->
+	<sql id="tableName">
+		meeting
+	</sql>
+
+	<!-- 保存会议 -->
+	<insert id="saveMeeting" parameterType="Meeting">
+		insert into <include refid="tableName"></include>
+		(
+			uuid,
+			pm_uuid,
+			meeting_id,
+			template_uuid,
+			meeting_theme,
+			meeting_date,
+			meeting_time,
+			meeting_status,
+			meeting_type,
+			meeting_ifmute,
+			meeting_length,
+			create_time
+		)values(
+			#{uuid},
+			#{pmUuid},
+			#{meetingId},
+			#{templateUuid},
+			#{meetingTheme},
+			#{meetingDate},
+			#{meetingTime},
+			#{meetingStatus},
+			#{meetingType},
+			#{meetingIfmute},
+			#{meetingLength},
+			#{createTime}
+		)
+	</insert>
+
+	<!-- 更新会议id -->
+	<update id="updateMeetingId" parameterType="Meeting">
+		update  <include refid="tableName"></include>
+		set meeting_id = #{meetingId}
+		where uuid = #{uuid}
+	</update>
+
+	<!-- 查询会议模版 -->
+	<select id="getMeetingForMeetingId" parameterType="Long" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where meeting_id = #{meetingId}
+	</select>
+
+	<!-- 查询会议信息 -->
+	<select id="getMeetingInfo" parameterType="Meeting" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where uuid = #{uuid}
+		<if test="meetingDate != null and meetingDate != ''">
+			and meeting_date = #{meetingDate}
+		</if>
+	</select>
+
+	<!-- 查询周期会议列表分页 -->
+	<select id="getPeriodMeetingList" parameterType="PeriodQuery" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where pm_uuid = #{uuid}
+		order by meeting_time asc
+		limit #{page},#{pageSize}
+	</select>
+
+	<!-- 查询周期会议列表全部 -->
+	<select id="getPeriodMeetingListCount" parameterType="String" resultType="integer">
+		select count(1) from <include refid="tableName"></include>
+		where pm_uuid = #{uuid}
+	</select>
+
+	<!-- 查询周期会议列表全部 -->
+	<select id="getPeriodMeetingLists" parameterType="String" resultMap="departmentResultMap">
+		select * from <include refid="tableName"></include>
+		where pm_uuid = #{uuid}
+		order by meeting_time asc
+	</select>
+
+	<!-- 周期最近一条会议信息 -->
+	<select id="getMeetingForPmuuid" parameterType="String" resultMap="departmentResultMap">
+		select
+			meeting_id,
+			meeting_status,
+			meeting_time
+		from <include refid="tableName"></include>
+		where pm_uuid = #{pmUuid}
+		and meeting_time>NOW()
+		limit 1
+	</select>
+
+	<!-- 更新会议信息 -->
+	<update id="updateMeeting" parameterType="Meeting">
+		update <include refid="tableName"></include>
+		set meeting_theme = #{meetingTheme},
+			template_uuid = #{templateUuid},
+			meeting_time = #{meetingTime},
+			meeting_ifmute = #{meetingIfmute},
+			meeting_length = #{meetingLength}
+		where meeting_id = #{meetingId}
+	</update>
+
+	<delete id="deleteMeeting" parameterType="String">
+		delete from <include refid="tableName"></include>
+		where pm_uuid = #{pmUuid}
+	</delete>
+
+    <delete id="deleteMeetingForMeetingId" parameterType="Long">
+        delete from <include refid="tableName"></include>
+        where meeting_id = #{meetingId}
+    </delete>
+
+</mapper>
